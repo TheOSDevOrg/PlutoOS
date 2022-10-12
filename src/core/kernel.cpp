@@ -170,6 +170,7 @@ void system::kernel::run()
     terminal_tty_i.register_command("ALLOC", [](arraylist<string> &args){
         if (args.size() != 0 || foo_alloc) return current_tty->write_line("This command doesn't take any arguments");
         foo_alloc = alloc(1370*1024);
+        current_tty->printf("Allocated %d bytes\n", 1370*1024);
         current_tty->write_line("alloc was successfull");
     });
     terminal_tty_i.register_command("RB", [](arraylist<string> &args){

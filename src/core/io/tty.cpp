@@ -105,7 +105,17 @@ void tty::write_line(string str)
     _stdout.putc('\n');
     _lock = false;
 }
-
+void tty::printf(const char *fmt, ...)
+{
+    char buffer[1024];
+    va_list args;
+    va_start(args, fmt);
+    vsprintf(buffer, fmt, args);
+    va_end(args);
+    _lock = true;
+    _stdout.puts(buffer);
+    _lock = false;
+}
 void tty::clear()
 {
     _lock = true;

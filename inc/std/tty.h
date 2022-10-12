@@ -8,7 +8,7 @@
 #include <std/arraylist.h>
 #include <std/string.h>
 #include <hal/drivers/keyboard.h>
-
+#include <std/cstring.h>
 #ifdef __cplusplus
 
 namespace std
@@ -134,6 +134,8 @@ namespace std
         void write_line(char *str);
         void write_line(char c);
         void write_line(string str);
+    public:
+        void printf(const char *fmt, ...);
     public:
         void clear();
         virtual void render();
