@@ -62,7 +62,7 @@ namespace std
                 _extra++;
             }
 
-            if (_count+1 >= _limit && _limited)
+            if (_count >= _limit && _limited)
             {
                 dprint_warn("reached maximum arraylist size");
                 return;
@@ -107,7 +107,7 @@ namespace std
         {
             if (_count < index) return;
             else if (_count == index) return add(object);
-            else if (_count+1 >= _limit && _limited)
+            else if (_count >= _limit && _limited)
             {
                 dprint_warn("reached maximum arraylist size");
                 return;

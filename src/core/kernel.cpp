@@ -15,6 +15,9 @@ heap_t system::kernel::heap;
 std::tty *system::kernel::current_tty;
 std::arraylist<std::tty *> system::kernel::ttys;
 kb::driver_t *system::kernel::kb;
+
+void *foo_alloc = nullptr;
+
 void system::kernel::tests::alloc_routine_check()
 {
     using namespace std;
@@ -59,7 +62,7 @@ void system::kernel::run()
 {
     using namespace std;
 
-    std::dbgio::serial = true;
+    //std::dbgio::serial = true;
     out::sinit();
 
     tty::init();
@@ -76,7 +79,7 @@ void system::kernel::run()
     ttys.add(((tty*)&terminal_tty_i));
     ttys.add(((tty*)&debug_tty_i));
     ttys.add(((tty*)&tests_tty));
-    //ttys.add(((tty*)&vbe_tty_i));
+    ttys.add(((tty*)&vbe_tty_i));
     ttys[1]->set(true);
     std::ctty_num = 1;
     std::dbgio::tty = true;
@@ -155,9 +158,15 @@ void system::kernel::run()
         frees.dispose();
     });
     terminal_tty_i.register_command("ALLOC", [](arraylist<string> &args){
-        if (args.size() != 0) return current_tty->write_line("This command doesn't take any arguments");
-        alloc(200);
+        if (args.size() != 0 || foo_alloc) return current_tty->write_line("This command doesn't take any arguments");
+        foo_alloc = alloc(1370*1024);
         current_tty->write_line("alloc was successfull");
+    });
+    terminal_tty_i.register_command("FREE", [](arraylist<string> &args){
+        if (args.size() != 0 || !foo_alloc) return current_tty->write_line("This command doesn't take any arguments");
+        free(foo_alloc);
+        foo_alloc = nullptr;
+        current_tty->write_line("free was successfull");
     });
     terminal_tty_i.register_command("MBOOT", [](arraylist<string> &args){
         current_tty->write("Bootloader: ");
