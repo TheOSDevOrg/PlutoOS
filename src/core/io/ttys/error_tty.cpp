@@ -17,7 +17,7 @@ tty(0, 1)
     _stdout.clean(system::core::io::color::white, system::core::io::color::yellow, (_stdout.get_max_x()/2)-((5/2)+1), 0, (_stdout.get_max_x()/2)+((5/2)+2), 0);
     _stdout.puts_color_at("FATAL", system::core::io::color::black, system::core::io::color::yellow, (_stdout.get_max_x()/2)-(5/2), 0);
 
-    _stdout.puts("An error has occurred and Strap has been shut down.\nPlease consider reporting this on github, specifying the steps to reproduce the error.\n\nGithub page: https://www.github.com/TheOSDevOrg/Strap\n");
+    _stdout.puts("An error has occurred and PlutoOS has been shut down.\nPlease consider reporting this on github, specifying the steps to reproduce the error.\n\nGithub page: https://www.github.com/TheOSDevOrg/Strap\n");
     _stdout.puts("Error: ");
     _stdout.puts(e);
     _stdout.puts("\n");

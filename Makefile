@@ -10,9 +10,10 @@ LD=i686-elf-ld
 NASM=nasm
 AS=i686-elf-as
 
-NAME=Strap
+NAME=PlutoOS
+VERSION="$(shell git rev-parse --short HEAD)"
 
-CXXFLAGS=-fno-threadsafe-statics -Iinc -nostdlib -fno-use-cxa-atexit -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -Wno-write-strings -Wno-unused-variable -w -Wno-narrowing -Wno-sign-compare -Wno-type-limits -Wno-unused-parameter -Wno-missing-field-initializers
+CXXFLAGS=-fno-threadsafe-statics -Iinc -nostdlib -fno-use-cxa-atexit -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -Wno-write-strings -Wno-unused-variable -w -Wno-narrowing -Wno-sign-compare -Wno-type-limits -Wno-unused-parameter -Wno-missing-field-initializers -DVERSION=\"$(VERSION)\"
 CFLAGS=-fno-threadsafe-statics -Iinc -nostdlib -fno-use-cxa-atexit -ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -Wno-write-strings -Wno-unused-variable -w -Wno-narrowing -Wno-sign-compare -Wno-type-limits -Wno-unused-parameter -Wno-missing-field-initializers
 NASMFLAGS=-felf32
 ASFLAGS=--32 -nostdlib
@@ -34,11 +35,11 @@ LINK_SOURCES=$(shell find $(OBJ_DIR) -name '*.o' -not -path "initrd/*")
 
 .PHONY: all
 
-all: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link grub run-kvm
-bochs: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link grub run-bochs
-video: loadervid $(C_FILES_OUT) $(CXX_FILES_OUT) $(AS_FILES_OUT) $(NASM_FILES_OUT) link grub run-kvm
+all: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link ramfs grub run-kvm
+bochs: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link ramfs grub run-bochs
+video: loadervid $(C_FILES_OUT) $(CXX_FILES_OUT) $(AS_FILES_OUT) $(NASM_FILES_OUT) link ramfs grub run-kvm
 
-build: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link grub
+build: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link ramfs grub
 
 #as:
 #	$(NASM) $(ASFLAGS) 'src/asm/idt_handlers.asm' -o 'src/asm/idt_handlers.o'
@@ -64,10 +65,10 @@ clean_modules:
 grub:
 	@mkdir -p isoroot/boot/grub
 	@mkdir -p isoroot/mods
-#	mkdir -p isoroot/initrd
+	mkdir -p isoroot/initrd
 #	echo "test" >> isoroot/mods/test_txt.mod
 	@cp $(OUT_DIR)/kernel.bin isoroot/boot
-#	mv initrd.img isoroot/initrd
+	mv initrd.img isoroot/initrd
 	@cp src/grub/grub.cfg isoroot/boot/grub
 	@grub-mkrescue -o $(OUT_DIR)/$(NAME).iso isoroot -V "Commander"
 	@rm -rf isoroot
@@ -97,6 +98,16 @@ run:
 run-kvm:
 	@qemu-system-i386 -cdrom $(OUT_DIR)/$(NAME).iso -serial stdio -vga std -no-reboot -no-shutdown -m 1G -enable-kvm -cpu host
 run-bochs:
-	bochs -q -f .bochsrc 
+	bochs -q -f bochsrc.txt
 test:
 	@echo $(AS_FILES_OUT) $(NASM_FILES_OUT)
+ramfs:
+	mkdir -p initrd/
+	cp -r base/* initrd/
+	tar czf  initrd.img -C initrd/ ./ --format=ustar
+	rm -rf initrd
+pc:
+	sudo cp $(OUT_DIR)/kernel.bin /boot
+	sudo mkdir -p /boot/initrd
+	sudo cp initrd.img /boot/initrd
+	sudo grub-mkconfig -o /boot/grub/grub.cfg
