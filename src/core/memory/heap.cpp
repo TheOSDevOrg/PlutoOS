@@ -111,7 +111,8 @@ void heap_t::defragment(bool silent)
 
     size_t sts = 0;
 
-    for (int y = 0; y < _entries_count; y++)
+    int y = 0;
+    for (y = 0; y < _entries_count; y++)
     {
         _stream.frame_at_as(_pos, _curr);
         

@@ -32,6 +32,9 @@ void driver_t::start()
     while (*_dat_port != 0xAA) ;
     dprint_info("keyboard reset");
 
+    _dat_port = 0xF0;
+    _dat_port = 0x02;
+
     _dat_port = 0xF4;
     if (_dat_port == 0xFA) dprint_debug("keyboard scan enabled");
 
