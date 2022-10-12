@@ -112,7 +112,7 @@ void terminal_tty::handle_command()
     }
     else if (cmd_name != "")
     {
-        kernel::current_tty->write("StrapTerm: command ");
+        kernel::current_tty->write("Pluto Shell: command ");
         kernel::current_tty->write(cmd_name);
         kernel::current_tty->write_line(" not found");
     }
@@ -123,7 +123,7 @@ void terminal_tty::handle_command()
 
 void terminal_tty::print_term()
 {
-    _stdout.puts_color("[strap term]", system::core::io::color::green, _stdout.get_bg());
+    _stdout.puts_color("Shell#:", system::core::io::color::green, _stdout.get_bg());
     _stdout.putc(' ');
 }
 

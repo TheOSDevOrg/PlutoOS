@@ -165,7 +165,9 @@ void system::kernel::run()
     });
     terminal_tty_i.register_command("ABOUT", [](arraylist<string> &args){
         if (args.size() != 0) return current_tty->write_line("This command doesn't take any arguments");
-        current_tty->write_line("Strap kernel [v 0.1.2022.09.10]");
+        current_tty->write("PlutoOS Kernel 0-1 Alpha (");
+        current_tty->write(VERSION);
+        current_tty->write_line(")");
     });
     terminal_tty_i.register_command("INFO", [](arraylist<string> &args){
         if (args.size() != 0) return current_tty->write_line("This command doesn't take any arguments");
