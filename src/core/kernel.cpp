@@ -3,6 +3,7 @@
 #include <hal/interrupts/gdt.h>
 #include <hal/interrupts/idt.h>
 #include <core/io/layouts/english.hpp>
+#include <hal/drivers/ports.h>
 using namespace system::hal::drivers;
 using namespace system::core::memory;
 using namespace system::hal::interrupts;
@@ -33,8 +34,17 @@ void system::kernel::tests::alloc_routine_check()
 
 void system::kernel::bootstrap(system::grub::multiboot_hdr *mboot)
 {
-    std::dbgio::serial = false;
-    std::dbgio::debug_lvl = std::dbgio::dbgtype::WARNING;
+    if(!strcmp(mboot->command_line, "--debug"))
+    {
+        std::dbgio::serial = false;
+        std::dbgio::debug_lvl = std::dbgio::dbgtype::DEBUG;
+    }
+    else
+    {
+        std::dbgio::serial = false;
+        std::dbgio::debug_lvl = std::dbgio::dbgtype::WARNING;
+    }
+    
     system::grub::init(mboot);
 
     dprint_info("kernel environment has been loaded!");
@@ -158,6 +168,10 @@ void system::kernel::run()
         if (args.size() != 0) return current_tty->write_line("This command doesn't take any arguments");
         alloc(200);
         current_tty->write_line("alloc was successfull");
+    });
+    terminal_tty_i.register_command("RB", [](arraylist<string> &args){
+        //triple fault
+        outb(0x64, 0xFE);
     });
     terminal_tty_i.register_command("MBOOT", [](arraylist<string> &args){
         current_tty->write("Bootloader: ");

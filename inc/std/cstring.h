@@ -96,6 +96,16 @@ static inline bool strcmp(const char *str1, const char *str2)
 	}
 	return str1[i] - str2[i];
 }
+static inline bool strcmp_real(const char *str1, const char *str2)
+{
+	int i = 0;
+	while (str1[i] && str2[i])
+	{
+		if (str1[i] != str2[i]) return false;
+		i++;
+	}
+	return true;
+}
 static inline bool strcmpis(const char *str1, const char *str2, int ind1, int ind2, size_t sz)
 {
 	while (str1[ind1] && str2[ind2])

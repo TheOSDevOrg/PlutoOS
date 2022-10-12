@@ -36,6 +36,7 @@ LINK_SOURCES=$(shell find $(OBJ_DIR) -name '*.o' -not -path "initrd/*")
 .PHONY: all
 
 all: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link ramfs grub run-kvm
+all-pc: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link ramfs pc
 bochs: loader $(AS_FILES_OUT) $(NASM_FILES_OUT) $(C_FILES_OUT) $(CXX_FILES_OUT) link ramfs grub run-bochs
 video: loadervid $(C_FILES_OUT) $(CXX_FILES_OUT) $(AS_FILES_OUT) $(NASM_FILES_OUT) link ramfs grub run-kvm
 
@@ -94,9 +95,9 @@ $(OBJ_DIR)/%.asm.o: $(SRC_DIR)/%.asm
 	@echo "NASM: $< -> $@"
 
 run:
-	@qemu-system-i386 -cdrom $(OUT_DIR)/$(NAME).iso -serial stdio -vga std -no-reboot -no-shutdown -m 1G
+	@qemu-system-i386 -cdrom $(OUT_DIR)/$(NAME).iso -serial stdio -vga std -m 1G
 run-kvm:
-	@qemu-system-i386 -cdrom $(OUT_DIR)/$(NAME).iso -serial stdio -vga std -no-reboot -no-shutdown -m 1G -enable-kvm -cpu host
+	@qemu-system-i386 -cdrom $(OUT_DIR)/$(NAME).iso -serial stdio -vga std -m 1G -enable-kvm -cpu host
 run-bochs:
 	bochs -q -f bochsrc.txt
 test:
